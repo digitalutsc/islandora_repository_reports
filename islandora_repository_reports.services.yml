@@ -7,6 +7,8 @@ services:
     class: Drupal\islandora_repository_reports\Plugin\DataSource\MimeType
   islandora_repository_reports.datasource.media_use:
     class: Drupal\islandora_repository_reports\Plugin\DataSource\MediaUse
+  islandora_repository_reports.datasource.media_by_collection:
+    class: Drupal\islandora_repository_reports\Plugin\DataSource\MediaByCollection
   islandora_repository_reports.datasource.model:
     class: Drupal\islandora_repository_reports\Plugin\DataSource\Model
   islandora_repository_reports.datasource.genre:
