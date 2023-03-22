@@ -11,6 +11,7 @@ Reports included in this module are:
 * number of nodes, grouped by month created
 * number of nodes, grouped by terms from the Islandora Models taxonomy
 * number of nodes, grouped by terms from the Islandora Genre taxonomy
+* number of media, grouped by collection
 * number of media, grouped by MIME type
 * number of media, grouped by Islandora Media Use taxonomy
 * number of unique values in a node field (string/text field types only)
