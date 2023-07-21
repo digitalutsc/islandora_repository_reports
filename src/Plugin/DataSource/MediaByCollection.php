@@ -42,24 +42,35 @@ class MediaByCollection implements IslandoraRepositoryReportsDataSourceInterface
     return t('@total media, grouped by Islandora Collection.', ['@total' => $total]);
   }
 
-/**
+  /**
    * {@inheritdoc}
    */
   public function getData() {
     $utilities = \Drupal::service('islandora_repository_reports.utilities');
 
     $entity_type_manager = \Drupal::service('entity_type.manager');
-    $media_storage = $entity_type_manager->getStorage('media');
-    $result = $media_storage->getAggregateQuery()
-      ->groupBy('field_media_of')
-      ->aggregate('field_media_of', 'COUNT')
+    $node_storage = $entity_type_manager->getStorage('node');
+    $results = $node_storage->getAggregateQuery()
+      ->groupBy('nid')
+      ->aggregate('field_islandora_object_media', 'COUNT')
+      ->condition('type', $utilities->getSelectedContentTypes(), 'IN')
       ->execute();
     $media_counts = [];
-    foreach ($result as $collection) {
-      if (!is_null($collection['field_media_of_target_id'])) {
-        if ($collection_node = \Drupal::entityTypeManager()->getStorage('node')->load($collection['field_media_of_target_id'])) {
-          if ($utilities->nodeIsCollection($collection_node)) {
-            $media_counts[$collection_node->getTitle()] = $collection['field_media_of_count'];
+    
+    foreach ($results as $result) {
+      if (!is_null($result['nid'])) {
+        if ($node = \Drupal::entityTypeManager()->getStorage('node')->load($result['nid'])) {
+          if ($utilities->nodeIsCollection($node)) {
+            $media_counts[$node->getTitle()] = $result['field_islandora_object_media_count'];
+
+            // Get all child nodes belonging to this collection
+            $children = $utilities->getDescendants($result['nid']);
+
+            // Sum up the media_of counts for all children
+            foreach ($children as $child_id) {
+              $child_result = array_search($child_id, array_column($result, 'nid'));
+              $media_counts[$node->getTitle()] += $results[$child_result]['field_islandora_object_media_count'];
+            }
           }
         }
       }
