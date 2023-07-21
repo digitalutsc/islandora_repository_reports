@@ -3,6 +3,7 @@
 namespace Drupal\islandora_repository_reports;
 
 use Drupal\node\NodeInterface;
+use Drupal\termwithuri_condition\Utils as ExtraUtils;
 
 /**
  * Utilities for the Media Formats Reports module.
@@ -432,8 +433,7 @@ class Utils {
    *   TRUE if the node has tag with that URI, FALSE if not.
    */
   public function nodeIsCollection(NodeInterface $node) {
-    $islandora_utils = \Drupal::service('islandora.utils');
-    $collection_term = $islandora_utils->getTermForUri('http://purl.org/dc/dcmitype/Collection');
+    $collection_term = ExtraUtils::getTermForUri('http://purl.org/dc/dcmitype/Collection');
     // Check that the node has the 'islandora_model' field and
     // that the term ID is a value in that field.
     if ($node->hasField('field_model')) {
