@@ -122,27 +122,6 @@ function islandora_repository_reports_form_islandora_repository_reports_report_s
     ],
   ];
 
-  // MIME type report form.
-  $media_use_terms = $utilities->getFormElementDefault('islandora_repository_reports_media_use_terms', []);
-
-  $terms = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadTree('islandora_media_use');
-  $media_use_options = [];
-  foreach ($terms as $term) {
-    $media_use_options[$term->tid] = $term->name;
-  }
-  $form['islandora_repository_reports_media_use_terms'] = [
-    '#type' => 'checkboxes',
-    '#weight' => 0,
-    '#title' => t('Include media with the following Media Use tags'),
-    '#options' => $media_use_options,
-    '#default_value' => $media_use_terms,
-    '#states' => [
-      'visible' => [
-        ':input[name="islandora_repository_reports_report_type"]' => ['value' => 'mimetype'],
-      ],
-    ],
-  ];
-
   // Disk usage report form.
   $disk_usage_type = $utilities->getFormElementDefault('islandora_repository_reports_disk_usage_type', 'filesystem');
 
