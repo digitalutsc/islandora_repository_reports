@@ -455,6 +455,47 @@ class Utils {
   }
 
   /**
+   * Gets the node ids of all descendants of a given node.
+   *
+   * @param string|int|null $parent_id
+   *   The node to check.
+   *
+   * @param array $discovered
+   *   An array containing discovered descendants.
+   * 
+   * @return array
+   *   An array containing node ids of $parent_id's descendants.
+   */
+  public function getDescendants($parent_id, $discovered = []) {
+    if (is_null($parent_id)) {
+      return [];
+    }
+
+    if (!in_array($parent_id, $discovered)) {
+      $discovered[] = $parent_id;
+    }
+
+    // Get the parent node's immediate children
+    $children_query = \Drupal::entityQuery('node')->condition('field_member_of', $parent_id);
+    $children_result = $children_query->execute();
+    $children = array_values($children_result);
+
+    // Remove already discovered children
+    $children = array_diff($children, $discovered);
+
+    // Mark new children as discovered
+    $discovered = array_merge($children, $discovered);
+
+    $descendants = $children;
+    foreach ($children as $child) {
+      $grandchildren = $this->getDescendants($child, $discovered);
+      $descendants = array_merge($descendants, $grandchildren);
+    }
+
+    return array_unique($descendants);
+  }
+
+  /**
    * Gets the data from a data source plugin.
    *
    * @param string $report_type

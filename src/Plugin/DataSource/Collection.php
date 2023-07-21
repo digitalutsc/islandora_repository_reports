@@ -64,6 +64,15 @@ class Collection implements IslandoraRepositoryReportsDataSourceInterface {
         if ($collection_node = \Drupal::entityTypeManager()->getStorage('node')->load($collection['field_member_of_target_id'])) {
           if ($utilities->nodeIsCollection($collection_node)) {
             $collection_counts[$collection_node->getTitle()] = $collection['field_member_of_count'];
+
+            // Get all child nodes belonging to this collection
+            $children = $utilities->getDescendants($collection['field_member_of_target_id']);
+
+            // Sum up the member_of counts for all children
+            foreach ($children as $child_id) {
+              $child_result = array_search($child_id, array_column($result, 'field_member_of_target_id'));
+              $collection_counts[$collection_node->getTitle()] += $result[$child_result]['field_member_of_count'];
+            }
           }
         }
       }
